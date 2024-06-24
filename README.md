@@ -1,7 +1,7 @@
 # Projeto .NET no Docker WSL
 Este repositório contém o script project_manager.sh que facilita a criação, gerenciamento e execução de projetos .NET dentro de um ambiente Docker. O script oferece vários comandos para inicializar soluções, adicionar projetos, restaurar dependências, compilar, executar, aplicar migrações, gerenciar pacotes NuGet, entre outros.
 
-###Pré-requisitos
+### Pré-requisitos
 - Docker
 - Docker Compose
 - Visual Studio Code com a extensão Remote - Containers
@@ -165,10 +165,10 @@ net init --solution [nome_da_solucao] --type [tipo_do_projeto] [--path caminho_d
 ```
 
 Variáveis:
---solution [nome_da_solucao]: Obrigatório. Nome da solução a ser criada.
---type [tipo_do_projeto]: Obrigatório. Tipo do projeto a ser criado (ex: console, webapi, classlib, etc.).
---path [caminho_do_projeto]: Opcional. Caminho onde o projeto será criado. Se não fornecido, usará o caminho padrão definido.
---version [versao_do_dotnet]: Opcional. Versão do .NET a ser utilizada (ex: 7.0, 8.0). Padrão é 8.0.
+* --solution [nome_da_solucao]: Obrigatório. Nome da solução a ser criada.
+* --type [tipo_do_projeto]: Obrigatório. Tipo do projeto a ser criado (ex: console, webapi, classlib, etc.).
+* --path [caminho_do_projeto]: Opcional. Caminho onde o projeto será criado. Se não fornecido, usará o caminho padrão definido.
+* --version [versao_do_dotnet]: Opcional. Versão do .NET a ser utilizada (ex: 7.0, 8.0). Padrão é 8.0.
 
 Exemplo:
 ```sh
@@ -183,9 +183,9 @@ net add-project --type [tipo_do_projeto] [--path caminho_do_projeto] [--version 
 ```
 
 Variáveis:
---type [tipo_do_projeto]: Obrigatório. Tipo do projeto a ser criado (ex: console, webapi, classlib, etc.).
---path [caminho_do_projeto]: Opcional. Caminho onde o projeto será criado. Se não fornecido, usará o caminho padrão definido.
---version [versao_do_dotnet]: Opcional. Versão do .NET a ser utilizada (ex: 7.0, 8.0). Padrão é 8.0.
+* --type [tipo_do_projeto]: Obrigatório. Tipo do projeto a ser criado (ex: console, webapi, classlib, etc.).
+* --path [caminho_do_projeto]: Opcional. Caminho onde o projeto será criado. Se não fornecido, usará o caminho padrão definido.
+* --version [versao_do_dotnet]: Opcional. Versão do .NET a ser utilizada (ex: 7.0, 8.0). Padrão é 8.0.
 
 Exemplo:
 ```sh
@@ -200,9 +200,9 @@ net create [--path caminho_do_projeto] --type [tipo_do_projeto] [--version versa
 ```
 
 Variáveis:
---path [caminho_do_projeto]: Opcional. Caminho onde o projeto será criado. Se não fornecido, usará o caminho padrão definido.
---type [tipo_do_projeto]: Obrigatório. Tipo do projeto a ser criado (ex: console, webapi, classlib, etc.).
---version [versao_do_dotnet]: Opcional. Versão do .NET a ser utilizada (ex: 7.0, 8.0). Padrão é 8.0.
+* --path [caminho_do_projeto]: Opcional. Caminho onde o projeto será criado. Se não fornecido, usará o caminho padrão definido.
+* --type [tipo_do_projeto]: Obrigatório. Tipo do projeto a ser criado (ex: console, webapi, classlib, etc.).
+* --version [versao_do_dotnet]: Opcional. Versão do .NET a ser utilizada (ex: 7.0, 8.0). Padrão é 8.0.
 
 Exemplo:
 ```sh
@@ -217,8 +217,8 @@ net restore [--path caminho_do_projeto] [--version versao_do_dotnet]
 ```
 
 Variáveis:
---path [caminho_do_projeto]: Opcional. Caminho do projeto para restaurar as dependências. Se não fornecido, usará o caminho padrão definido.
---version [versao_do_dotnet]: Opcional. Versão do .NET a ser utilizada (ex: 7.0, 8.0). Padrão é 8.0.
+* --path [caminho_do_projeto]: Opcional. Caminho do projeto para restaurar as dependências. Se não fornecido, usará o caminho padrão definido.
+* --version [versao_do_dotnet]: Opcional. Versão do .NET a ser utilizada (ex: 7.0, 8.0). Padrão é 8.0.
 
 Exemplo:
 ```sh
@@ -233,8 +233,8 @@ net build [--path caminho_do_projeto] [--version versao_do_dotnet]
 ```
 
 Variáveis:
---path [caminho_do_projeto]: Opcional. Caminho do projeto para compilar. Se não fornecido, usará o caminho padrão definido.
---version [versao_do_dotnet]: Opcional. Versão do .NET a ser utilizada (ex: 7.0, 8.0). Padrão é 8.0.
+* --path [caminho_do_projeto]: Opcional. Caminho do projeto para compilar. Se não fornecido, usará o caminho padrão definido.
+* --version [versao_do_dotnet]: Opcional. Versão do .NET a ser utilizada (ex: 7.0, 8.0). Padrão é 8.0.
 
 Exemplo:
 ```sh
@@ -249,10 +249,10 @@ net run [--path caminho_do_projeto] [--version versao_do_dotnet] [--port porta] 
 ```
 
 Variáveis:
---path [caminho_do_projeto]: Opcional. Caminho do projeto para executar. Se não fornecido, usará o caminho padrão definido.
---version [versao_do_dotnet]: Opcional. Versão do .NET a ser utilizada (ex: 7.0, 8.0). Padrão é 8.0.
---port [porta]: Opcional. Porta a ser utilizada pelo projeto. Padrão é 5000.
---debug: Opcional. Executa o projeto em modo debug (sem recompilar).
+* --path [caminho_do_projeto]: Opcional. Caminho do projeto para executar. Se não fornecido, usará o caminho padrão definido.
+* --version [versao_do_dotnet]: Opcional. Versão do .NET a ser utilizada (ex: 7.0, 8.0). Padrão é 8.0.
+* --port [porta]: Opcional. Porta a ser utilizada pelo projeto. Padrão é 5000.
+* --debug: Opcional. Executa o projeto em modo debug (sem recompilar).
 
 Exemplo:
 ```sh
@@ -267,8 +267,8 @@ net migrate [--path caminho_do_projeto] [--version versao_do_dotnet]
 ```
 
 Variáveis:
---path [caminho_do_projeto]: Opcional. Caminho do projeto para aplicar migrações. Se não fornecido, usará o caminho padrão definido.
---version [versao_do_dotnet]: Opcional. Versão do .NET a ser utilizada (ex: 7.0, 8.0). Padrão é 8.0.
+* --path [caminho_do_projeto]: Opcional. Caminho do projeto para aplicar migrações. Se não fornecido, usará o caminho padrão definido.
+* --version [versao_do_dotnet]: Opcional. Versão do .NET a ser utilizada (ex: 7.0, 8.0). Padrão é 8.0.
 
 Exemplo:
 ```sh
@@ -283,9 +283,9 @@ net add-migration --name [nome_da_migracao] [--path caminho_do_projeto] [--versi
 ```
 
 Variáveis:
---name [nome_da_migracao]: Obrigatório. Nome da migração a ser criada.
---path [caminho_do_projeto]: Opcional. Caminho do projeto para criar a migração. Se não fornecido, usará o caminho padrão definido.
---version [versao_do_dotnet]: Opcional. Versão do .NET a ser utilizada (ex: 7.0, 8.0). Padrão é 8.0.
+* --name [nome_da_migracao]: Obrigatório. Nome da migração a ser criada.
+* --path [caminho_do_projeto]: Opcional. Caminho do projeto para criar a migração. Se não fornecido, usará o caminho padrão definido.
+* --version [versao_do_dotnet]: Opcional. Versão do .NET a ser utilizada (ex: 7.0, 8.0). Padrão é 8.0.
 
 Exemplo:
 ```sh
@@ -299,8 +299,8 @@ Remove a última migração.
 net remove-migration [--path caminho_do_projeto] [--version versao_do_dotnet]
 ```
 Variáveis:
---path [caminho_do_projeto]: Opcional. Caminho do projeto para remover a migração. Se não fornecido, usará o caminho padrão definido.
---version [versao_do_dotnet]: Opcional. Versão do .NET a ser utilizada (ex: 7.0, 8.0). Padrão é 8.0.
+* --path [caminho_do_projeto]: Opcional. Caminho do projeto para remover a migração. Se não fornecido, usará o caminho padrão definido.
+* --version [versao_do_dotnet]: Opcional. Versão do .NET a ser utilizada (ex: 7.0, 8.0). Padrão é 8.0.
 
 Exemplo:
 ```sh
@@ -315,9 +315,9 @@ net rollback-migration --name [nome_da_migracao] [--path caminho_do_projeto] [--
 ```
 
 Variáveis:
---name [nome_da_migracao]: Obrigatório. Nome da migração para a qual reverter.
---path [caminho_do_projeto]: Opcional. Caminho do projeto para reverter a migração. Se não fornecido, usará o caminho padrão definido.
---version [versao_do_dotnet]: Opcional. Versão do .NET a ser utilizada (ex: 7.0, 8.0). Padrão é 8.0.
+* --name [nome_da_migracao]: Obrigatório. Nome da migração para a qual reverter.
+* --path [caminho_do_projeto]: Opcional. Caminho do projeto para reverter a migração. Se não fornecido, usará o caminho padrão definido.
+* --version [versao_do_dotnet]: Opcional. Versão do .NET a ser utilizada (ex: 7.0, 8.0). Padrão é 8.0.
 
 Exemplo:
 ```sh
@@ -332,10 +332,10 @@ net add-nuget --package [nome_do_pacote] [--path caminho_do_projeto] [--version 
 ```
 
 Variáveis:
---package [nome_do_pacote]: Obrigatório. Nome do pacote NuGet a ser adicionado.
---path [caminho_do_projeto]: Opcional. Caminho do projeto para adicionar o pacote. Se não fornecido, usará o caminho padrão definido.
---version [versao_do_pacote]: Opcional. Versão do pacote NuGet a ser adicionada. Se não fornecido, adiciona a última versão disponível.
---dotnet-version [versao_do_dotnet]: Opcional. Versão do .NET a ser utilizada (ex: 7.0, 8.0). Padrão é 8.0.
+* --package [nome_do_pacote]: Obrigatório. Nome do pacote NuGet a ser adicionado.
+* --path [caminho_do_projeto]: Opcional. Caminho do projeto para adicionar o pacote. Se não fornecido, usará o caminho padrão definido.
+* --version [versao_do_pacote]: Opcional. Versão do pacote NuGet a ser adicionada. Se não fornecido, adiciona a última versão disponível.
+* --dotnet-version [versao_do_dotnet]: Opcional. Versão do .NET a ser utilizada (ex: 7.0, 8.0). Padrão é 8.0.
 
 Exemplo:
 ```sh
@@ -350,8 +350,8 @@ net list-nuget [--path caminho_do_projeto] [--version versao_do_dotnet]
 ```
 
 Variáveis:
---path [caminho_do_projeto]: Opcional. Caminho do projeto para listar os pacotes. Se não fornecido, usará o caminho padrão definido.
---version [versao_do_dotnet]: Opcional. Versão do .NET a ser utilizada (ex: 7.0, 8.0). Padrão é 8.0.
+* --path [caminho_do_projeto]: Opcional. Caminho do projeto para listar os pacotes. Se não fornecido, usará o caminho padrão definido.
+* --version [versao_do_dotnet]: Opcional. Versão do .NET a ser utilizada (ex: 7.0, 8.0). Padrão é 8.0.
 Exemplo:
 ```sh
 net list-nuget --path src/app/td.api.test
@@ -365,9 +365,9 @@ net remove-nuget --package [nome_do_pacote] [--path caminho_do_projeto] [--versi
 ```
 
 Variáveis:
---package [nome_do_pacote]: Obrigatório. Nome do pacote NuGet a ser removido.
---path [caminho_do_projeto]: Opcional. Caminho do projeto para remover o pacote. Se não fornecido, usará o caminho padrão definido.
---version [versao_do_dotnet]: Opcional. Versão do .NET a ser utilizada (ex: 7.0, 8.0). Padrão é 8.0.
+* --package [nome_do_pacote]: Obrigatório. Nome do pacote NuGet a ser removido.
+* --path [caminho_do_projeto]: Opcional. Caminho do projeto para remover o pacote. Se não fornecido, usará o caminho padrão definido.
+* --version [versao_do_dotnet]: Opcional. Versão do .NET a ser utilizada (ex: 7.0, 8.0). Padrão é 8.0.
 
 Exemplo:
 ```sh
@@ -382,10 +382,10 @@ net watch [--path caminho_do_projeto] [--version versao_do_dotnet] [--port porta
 ```
 
 Variáveis:
---path [caminho_do_projeto]: Opcional. Caminho do projeto para assistir as mudanças. Se não fornecido, usará o caminho padrão definido.
---version [versao_do_dotnet]: Opcional. Versão do .NET a ser utilizada (ex: 7.0, 8.0). Padrão é 8.0.
---port [porta]: Opcional. Porta a ser utilizada pelo projeto. Padrão é 5000.
---debug: Opcional. Executa o projeto em modo debug (sem hot reload).
+* --path [caminho_do_projeto]: Opcional. Caminho do projeto para assistir as mudanças. Se não fornecido, usará o caminho padrão definido.
+* --version [versao_do_dotnet]: Opcional. Versão do .NET a ser utilizada (ex: 7.0, 8.0). Padrão é 8.0.
+* --port [porta]: Opcional. Porta a ser utilizada pelo projeto. Padrão é 5000.
+* --debug: Opcional. Executa o projeto em modo debug (sem hot reload).
 
 Exemplo:
 ```sh
