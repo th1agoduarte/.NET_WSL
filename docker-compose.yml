@@ -1,0 +1,15 @@
+services:
+  dev:
+    build:
+      context: .
+      dockerfile: ./docker/Dockerfile
+      args:
+        USER_ID: ${UID:-1000}
+        GROUP_ID: ${GID:-1000}
+    volumes:
+      - .:/workspace
+    ports:
+      - "5000:5000"
+      - "5001:5001"
+    command: sleep infinity
+    user: "${UID:-1000}:${GID:-1000}"
