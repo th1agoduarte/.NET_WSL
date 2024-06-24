@@ -1,428 +1,427 @@
-# Projeto .NET no Docker WSL
-Este repositório contém o script project_manager.sh que facilita a criação, gerenciamento e execução de projetos .NET dentro de um ambiente Docker. O script oferece vários comandos para inicializar soluções, adicionar projetos, restaurar dependências, compilar, executar, aplicar migrações, gerenciar pacotes NuGet, entre outros.
+# .NET Project in Docker WSL
+This repository contains the script project_manager.sh which facilitates the creation, management, and execution of .NET projects within a Docker environment. The script offers various commands to initialize solutions, add projects, restore dependencies, build, run, apply migrations, manage NuGet packages, among others.
 
-### Pré-requisitos
+### Prerequisites
 - Docker
 - Docker Compose
-- Visual Studio Code com a extensão Remote - Containers
+- Visual Studio Code with the Remote - Containers extension
 
-## Alias para o script
-Para facilitar o uso do script project_manager.sh, você pode criar um alias no seu arquivo de configuração de shell (.bashrc, .zshrc, etc.). Adicione a linha abaixo ao final do seu arquivo de configuração:
+## Alias for the Script
+To make using the project_manager.sh script easier, you can create an alias in your shell configuration file (.bashrc, .zshrc, etc.). Add the line below to the end of your configuration file:
 ```sh
 alias net="docker/project_manager.sh"
 
-#Substitua caminho/para/seu pelo caminho real onde o script project_manager.sh está localizado.
+# Replace path/to/your with the actual path where the project_manager.sh script is located.
 
-#Depois de adicionar a linha, recarregue o arquivo de configuração:
+# After adding the line, reload the configuration file:
 
-source ~/.bashrc # ou source ~/.zshrc, dependendo do seu shell
+source ~/.bashrc # or source ~/.zshrc, depending on your shell
 
-#Agora você pode usar o alias pm para chamar o script project_manager.sh de qualquer lugar:
+# Now you can use the alias net to call the project_manager.sh script from anywhere:
 
-net init --solution TesteDocker --type webapi --path src/app/td.api.test
+net init --solution TestDocker --type webapi --path src/app/td.api.test
 net add-project --type classlib --path src/domain/td.domain.test
 net migrate --path src/app/td.api.test
 ```
 
-## Requisitos
+## Requirements
 
-- Docker e Docker Compose instalados
-- Bash shell (para executar os scripts de inicialização e atualização)
-- Torne o script executável:
+* Docker and Docker Compose installed
+* Bash shell (to run the initialization and update scripts)
+
+Make the script executable:
 ```sh
 chmod +x "$(pwd)/docker/project_manager.sh"
 ```
 
-## Definir o Caminho Padrão do Projeto
+## Set Default Project Path
 
-Para definir o caminho padrão do projeto, use o comando set-default-path:
+To set the default project path, use the set-default-path command:
 ```sh
 net set-default-path src/app/td.api.test
 ```
-O comando acima gera um arquivo .project_manager_config, onde fica salvo o path base. 
-Importante esse caminho será usado como base para as comandos que usam variavel --path.
-Mas isso não impede que possa passar o path para criar um novo projeto por exemplo.
+The command above generates a .project_manager_config file where the base path is saved. This path will be used as the base for commands that use the --path variable. However, this does not prevent you from specifying a path to create a new project, for example.
 
-## Comandos Disponíveis - Resumo
-O script project_manager.sh oferece os seguintes comandos:
+## Available Commands - Summary
+The project_manager.sh script offers the following commands:
 
-- set-default-path: Define o caminho padrão do projeto.
-- set-default-dotnet-version Define a versão do .net a usar no projeto.
-- set-default-port Define a porta padrão para abertura do run ou debugs do projeto.
-- init: Inicializa o ambiente de desenvolvimento.
-- add-project: Adiciona um novo projeto à solução existente.
-- create: Cria um novo projeto e adiciona à solução existente.
-- restore: Restaura as dependências do projeto.
-- build: Compila o projeto.
-- run: Executa o projeto.
-- migrate: Aplica migrações ao banco de dados.
-- add-migration: Cria uma nova migração.
-- remove-migration: Remove a última migração.
-- rollback-migration: Reverte para uma migração específica.
-- add-nuget: Adiciona um pacote NuGet ao projeto.
-- list-nuget: Lista os pacotes NuGet do projeto.
-- remove-nuget: Remove um pacote NuGet do projeto.
-- watch: Assiste mudanças no projeto e recompila automaticamente.
-- help: Mostra a ajuda do script.
-- up: Sobe o docker compose do projeto
-- down: Finalizar o docker compose do projeto
+* `set-default-path`: Sets the default project path.
+* `set-default-dotnet-version`: Sets the .NET version to use in the project.
+* `set-default-port`: Sets the default port for running or debugging the project.
+* `init`: Initializes the development environment.
+* `add-project`: Adds a new project to the existing solution.
+* `create`: Creates a new project and adds it to the existing solution.
+* `restore`: Restores project dependencies.
+* `build`: Builds the project.
+* `run`: Runs the project.
+* `migrate`: Applies migrations to the database.
+* `add-migration`: Creates a new migration.
+* `remove-migration`: Removes the last migration.
+* `rollback-migration`: Rolls back to a specific migration.
+* `add-nuget`: Adds a NuGet package to the project.
+* `list-nuget`: Lists the project's NuGet packages.
+* `remove-nuget`: Removes a NuGet package from the project.
+* `watch`: Watches for changes in the project and recompiles automatically.
+* `help`: Shows the script help.
+* `up`: Brings up the project's Docker compose.
+* `down`: Brings down the project's Docker compose.
 
-## Exemplo Instruções de Uso
+## Example Usage Instructions
 
-### Inicialização do Projeto
+### Project Initialization
 
-Inicializar o Ambiente de Desenvolvimentodeseja e cria um novo projeto:
+Initialize the development environment and create a new project:
 ```sh
-- net init --solution TesteDocker --type webapi --path src/app/td.api.test
+- net init --solution TestDocker --type webapi --path src/app/td.api.test
 ```
-### Adicionar um Novo Projeto à Solução Existente
+### Add a New Project to the Existing Solution
 
-Para adicionar uma nova camada (Application, Domain, Infrastructure), execute o comando:
+To add a new layer (Application, Domain, Infrastructure), run the command:
 ```sh
 net add-project --type classlib --path src/domain/td.domain.test
 ```
-### Restaurar Dependências
+### Restore Dependencies
 ```sh
 net restore --path src/app/td.api.test
 ```
-### Compilar o Projeto
+### Build the Project
 ```sh
 net build --path src/app/td.api.test
 ```
 
-### Executar o Projeto
+### Run the Project
 ```sh
 net run --path src/app/td.api.test --port 5000
 ```
-### Criar e Aplicar Migrações
+### Create and Apply Migrations
 ```sh
 net add-migration --path src/app/td.api.test --name InitialCreate
 net migrate --path src/app/td.api.test
 ```
-### Adicionar, Listar e Remover Pacotes NuGet
-#### Adicionar um pacote NuGet:
+### Add, List, and Remove NuGet Packages
+#### Add a NuGet package:
 ```sh
 net add-nuget --path src/app/td.api.test --package Newtonsoft.Json --version 13.0.1
 ```
-#### Listar pacotes NuGet:
+#### List NuGet packages:
 ```sh
 net list-nuget --path src/app/td.api.test
 ```
 
-#### Remover um pacote NuGet:
+#### Remove a NuGet package:
 ```sh
 net remove-nuget --path src/app/td.api.test --package Newtonsoft.Json
 ```
 
-## Para Desenvolvimento
-### Assistir Mudanças no Projeto e Recompilar Automaticamente
+## For Development
+### Watch for Changes and Recompile Automatically
 ```sh
 net watch --path src/app/td.api.test --port 5000
 ```
 
-## Commandos e Instruções
+## Commands and Instructions
 
 ### set-default-path
 
-Define o caminho padrão do projeto que será utilizado quando um caminho não for explicitamente fornecido em outros comandos.
+Sets the default project path to be used when a path is not explicitly provided in other commands
 
 ```sh
 net set-default-path [caminho_do_projeto]
 ```
-Exemplo:
+Example:
 ```sh
 net set-default-path src/app/td.api.test
 ```
 
 ### set-default-dotnet-version
-Define a versão padrão do .NET que será utilizada quando uma versão não for explicitamente fornecida em outros comandos.
+Sets the default .NET version to be used when a version is not explicitly provided in other commands.
 
 ```sh
 net set-default-dotnet-version [versao_do_dotnet]
 ```
 
-Exemplo:
+Example:
 ```sh
 net set-default-dotnet-version 8.0
 ```
 
 ### set-default-port
-Define a porta padrão que será utilizada quando uma porta não for explicitamente fornecida em outros comandos.
+Sets the default port to be used when a port is not explicitly provided in other commands.
 
 ```sh
 net set-default-port [porta]
 ```
-Exemplo:
+Example:
 ```sh
 net set-default-port 5000
 ```
 
 ### init
-Inicializa o ambiente de desenvolvimento, criando uma solução e adicionando um projeto.
+Initializes the development environment, creating a solution and adding a project.
 
 ```sh
 net init --solution [nome_da_solucao] --type [tipo_do_projeto] [--path caminho_do_projeto] [--version versao_do_dotnet]
 ```
 
-Variáveis:
-* --solution [nome_da_solucao]: Obrigatório. Nome da solução a ser criada.
-* --type [tipo_do_projeto]: Obrigatório. Tipo do projeto a ser criado (ex: console, webapi, classlib, etc.).
-* --path [caminho_do_projeto]: Opcional. Caminho onde o projeto será criado. Se não fornecido, usará o caminho padrão definido.
-* --version [versao_do_dotnet]: Opcional. Versão do .NET a ser utilizada (ex: 7.0, 8.0). Padrão é 8.0.
+Variables:
+* `--solution [solution_name]`: Required. Name of the solution to be created.
+* `--type [project_type]`: Required. Type of the project to be created (e.g., console, webapi, classlib, etc.).
+* `--path [project_path]`: Optional. Path where the project will be created. If not provided, the default path will be used.
+* `--version [dotnet_version]`: Optional. .NET version to be used (e.g., 7.0, 8.0). Default is 8.0.
 
-Exemplo:
+Example:
 ```sh
 net init --solution TesteDocker --type webapi --path src/app/td.api.test
 ```
 
 ### add-project
-Adiciona um novo projeto à solução existente.
+Adds a new project to the existing solution.
 
 ```sh
-net add-project --type [tipo_do_projeto] [--path caminho_do_projeto] [--version versao_do_dotnet]
+net add-project --type [project_type] [--path project_path] [--version dotnet_version]
 ```
 
-Variáveis:
-* --type [tipo_do_projeto]: Obrigatório. Tipo do projeto a ser criado (ex: console, webapi, classlib, etc.).
-* --path [caminho_do_projeto]: Opcional. Caminho onde o projeto será criado. Se não fornecido, usará o caminho padrão definido.
-* --version [versao_do_dotnet]: Opcional. Versão do .NET a ser utilizada (ex: 7.0, 8.0). Padrão é 8.0.
+Variables:
+* `--type [project_type]`: Required. Type of the project to be created (e.g., console, webapi, classlib, etc.).
+* `--path [project_path]`: Optional. Path where the project will be created. If not provided, the default path will be used.
+* `--version [dotnet_version]`: Optional. .NET version to be used (e.g., 7.0, 8.0). Default is 8.0.
 
-Exemplo:
+Example:
 ```sh
 net add-project --type classlib --path src/domain/td.domain.test
 ```
 
 ### create
-Cria um novo projeto e o adiciona à solução existente.
+Creates a new project and adds it to the existing solution.
 
 ```sh
-net create [--path caminho_do_projeto] --type [tipo_do_projeto] [--version versao_do_dotnet]
+net create [--path project_path] --type [project_type] [--version dotnet_version]
 ```
 
-Variáveis:
-* --path [caminho_do_projeto]: Opcional. Caminho onde o projeto será criado. Se não fornecido, usará o caminho padrão definido.
-* --type [tipo_do_projeto]: Obrigatório. Tipo do projeto a ser criado (ex: console, webapi, classlib, etc.).
-* --version [versao_do_dotnet]: Opcional. Versão do .NET a ser utilizada (ex: 7.0, 8.0). Padrão é 8.0.
+Variables:
+* `--path [project_path]`: Optional. Path where the project will be created. If not provided, the default path will be used.
+* `--type [project_type]`: Required. Type of the project to be created (e.g., console, webapi, classlib, etc.).
+* `--version [dotnet_version]`: Optional. .NET version to be used (e.g., 7.0, 8.0). Default is 8.0.
 
-Exemplo:
+Example:
 ```sh
 net create --path src/app/td.api.test --type webapi
 ```
 
 ### restore
-Restaura as dependências do projeto.
+Restores project dependencies.
 
 ```sh
-net restore [--path caminho_do_projeto] [--version versao_do_dotnet]
+net restore [--path project_path] [--version dotnet_version]
 ```
 
-Variáveis:
-* --path [caminho_do_projeto]: Opcional. Caminho do projeto para restaurar as dependências. Se não fornecido, usará o caminho padrão definido.
-* --version [versao_do_dotnet]: Opcional. Versão do .NET a ser utilizada (ex: 7.0, 8.0). Padrão é 8.0.
+Variables:
+* `--path [project_path]`: Optional. Path of the project to restore dependencies. If not provided, the default path will be used.
+* `--version [dotnet_version]`: Optional. .NET version to be used (e.g., 7.0, 8.0). Default is 8.0.
 
-Exemplo:
+Example:
 ```sh
 net restore --path src/app/td.api.test
 ```
 
 ### build
-Compila o projeto.
+Builds the project.
 
 ```sh
-net build [--path caminho_do_projeto] [--version versao_do_dotnet]
+net build [--path project_path] [--version dotnet_version]
 ```
 
-Variáveis:
-* --path [caminho_do_projeto]: Opcional. Caminho do projeto para compilar. Se não fornecido, usará o caminho padrão definido.
-* --version [versao_do_dotnet]: Opcional. Versão do .NET a ser utilizada (ex: 7.0, 8.0). Padrão é 8.0.
+Variables:
+* `--path [project_path]`: Optional. Path of the project to build. If not provided, the default path will be used.
+* `--version [dotnet_version]`: Optional. .NET version to be used (e.g., 7.0, 8.0). Default is 8.0.
 
-Exemplo:
+Example:
 ```sh
 net build --path src/app/td.api.test
 ```
 
 ### run
-Executa o projeto.
+Runs the project.
 
 ```sh
-net run [--path caminho_do_projeto] [--version versao_do_dotnet] [--port porta] [--debug]
+net run [--path project_path] [--version dotnet_version] [--port port] [--debug]
 ```
 
-Variáveis:
-* --path [caminho_do_projeto]: Opcional. Caminho do projeto para executar. Se não fornecido, usará o caminho padrão definido.
-* --version [versao_do_dotnet]: Opcional. Versão do .NET a ser utilizada (ex: 7.0, 8.0). Padrão é 8.0.
-* --port [porta]: Opcional. Porta a ser utilizada pelo projeto. Padrão é 5000.
-* --debug: Opcional. Executa o projeto em modo debug (sem recompilar).
+Variables:
+* `--path [project_path]`: Optional. Path of the project to run. If not provided, the default path will be used.
+* `--version [dotnet_version]`: Optional. .NET version to be used (e.g., 7.0, 8.0). Default is 8.0.
+* `--port [port]`: Optional. Port to be used by the project. Default is 5000.
+* `--debug`: Optional. Runs the project in debug mode (without recompiling).
 
-Exemplo:
+Example:
 ```sh
 net run --path src/app/td.api.test --port 5000
 ```
 
 ### migrate
-Aplica migrações ao banco de dados.
+Applies migrations to the database.
 
 ```sh
-net migrate [--path caminho_do_projeto] [--version versao_do_dotnet]
+net migrate [--path project_path] [--version dotnet_version]
 ```
 
-Variáveis:
-* --path [caminho_do_projeto]: Opcional. Caminho do projeto para aplicar migrações. Se não fornecido, usará o caminho padrão definido.
-* --version [versao_do_dotnet]: Opcional. Versão do .NET a ser utilizada (ex: 7.0, 8.0). Padrão é 8.0.
+Variables:
+* `--path [project_path]`: Optional. Path of the project to apply migrations. If not provided, the default path will be used.
+* `--version [dotnet_version]`: Optional. .NET version to be used (e.g., 7.0, 8.0). Default is 8.0.
 
-Exemplo:
+Example:
 ```sh
 net migrate --path src/app/td.api.test
 ```
 
 ### add-migration
-Cria uma nova migração.
+Creates a new migration.
 
 ```sh
-net add-migration --name [nome_da_migracao] [--path caminho_do_projeto] [--version versao_do_dotnet]
+net add-migration --name [migration_name] [--path project_path] [--version dotnet_version]
 ```
 
-Variáveis:
-* --name [nome_da_migracao]: Obrigatório. Nome da migração a ser criada.
-* --path [caminho_do_projeto]: Opcional. Caminho do projeto para criar a migração. Se não fornecido, usará o caminho padrão definido.
-* --version [versao_do_dotnet]: Opcional. Versão do .NET a ser utilizada (ex: 7.0, 8.0). Padrão é 8.0.
+Variables:
+* `--name [migration_name]`: Required. Name of the migration to be created.
+* `--path [project_path]`: Optional. Path of the project to create the migration. If not provided, the default path will be used.
+* `--version [dotnet_version]`: Optional. .NET version to be used (e.g., 7.0, 8.0). Default is 8.0.
 
-Exemplo:
+Example:
 ```sh
 net add-migration --name InitialCreate --path src/app/td.api.test
 ```
 
 ### remove-migration
-Remove a última migração.
+Removes the last migration.
 
 ```sh
-net remove-migration [--path caminho_do_projeto] [--version versao_do_dotnet]
+net remove-migration [--path project_path] [--version dotnet_version]
 ```
-Variáveis:
-* --path [caminho_do_projeto]: Opcional. Caminho do projeto para remover a migração. Se não fornecido, usará o caminho padrão definido.
-* --version [versao_do_dotnet]: Opcional. Versão do .NET a ser utilizada (ex: 7.0, 8.0). Padrão é 8.0.
+Variables:
+* `--path [project_path]`: Optional. Path of the project to remove the migration. If not provided, the default path will be used.
+* `--version [dotnet_version]`: Optional. .NET version to be used (e.g., 7.0, 8.0). Default is 8.0.
 
-Exemplo:
+Example:
 ```sh
 net remove-migration --path src/app/td.api.test
 ```
 
 ### rollback-migration
-Reverte para uma migração específica.
+Rolls back to a specific migration.
 
 ```sh
-net rollback-migration --name [nome_da_migracao] [--path caminho_do_projeto] [--version versao_do_dotnet]
+net rollback-migration --name [migration_name] [--path project_path] [--version dotnet_version]
 ```
 
-Variáveis:
-* --name [nome_da_migracao]: Obrigatório. Nome da migração para a qual reverter.
-* --path [caminho_do_projeto]: Opcional. Caminho do projeto para reverter a migração. Se não fornecido, usará o caminho padrão definido.
-* --version [versao_do_dotnet]: Opcional. Versão do .NET a ser utilizada (ex: 7.0, 8.0). Padrão é 8.0.
+Variables:
+* `--name [migration_name]`: Required. Name of the migration to roll back to.
+* `--path [project_path]`: Optional. Path of the project to roll back the migration. If not provided, the default path will be used.
+* `--version [dotnet_version]`: Optional. .NET version to be used (e.g., 7.0, 8.0). Default is 8.0.
 
-Exemplo:
+Example:
 ```sh
 net rollback-migration --name InitialCreate --path src/app/td.api.test
 ```
 
 ### add-nuget
-Adiciona um pacote NuGet ao projeto.
+Adds a NuGet package to the project.
 
 ```sh
-net add-nuget --package [nome_do_pacote] [--path caminho_do_projeto] [--version versao_do_pacote] [--dotnet-version versao_do_dotnet]
+net add-nuget --package [package_name] [--path project_path] [--version package_version] [--dotnet-version dotnet_version]
 ```
 
-Variáveis:
-* --package [nome_do_pacote]: Obrigatório. Nome do pacote NuGet a ser adicionado.
-* --path [caminho_do_projeto]: Opcional. Caminho do projeto para adicionar o pacote. Se não fornecido, usará o caminho padrão definido.
-* --version [versao_do_pacote]: Opcional. Versão do pacote NuGet a ser adicionada. Se não fornecido, adiciona a última versão disponível.
-* --dotnet-version [versao_do_dotnet]: Opcional. Versão do .NET a ser utilizada (ex: 7.0, 8.0). Padrão é 8.0.
+Variables:
+* `--package [package_name]`: Required. Name of the NuGet package to be added.
+* `--path [project_path]`: Optional. Path of the project to add the package. If not provided, the default path will be used.
+* `--version [package_version]`: Optional. Version of the NuGet package to be added. If not provided, the latest available version is added.
+* `--dotnet-version [dotnet_version]`: Optional. .NET version to be used (e.g., 7.0, 8.0). Default is 8.0.
 
-Exemplo:
+Example:
 ```sh
 net add-nuget --package Newtonsoft.Json --path src/app/td.api.test --version 13.0.1
 ```
 
 ### list-nuget
-Lista os pacotes NuGet do projeto.
+Lists the project's NuGet packages.
 
 ```sh
-net list-nuget [--path caminho_do_projeto] [--version versao_do_dotnet]
+net list-nuget [--path project_path] [--version dotnet_version]
 ```
 
-Variáveis:
-* --path [caminho_do_projeto]: Opcional. Caminho do projeto para listar os pacotes. Se não fornecido, usará o caminho padrão definido.
-* --version [versao_do_dotnet]: Opcional. Versão do .NET a ser utilizada (ex: 7.0, 8.0). Padrão é 8.0.
-Exemplo:
+Variables:
+* `--path [project_path]`: Optional. Path of the project to list the packages. If not provided, the default path will be used.
+* `--version [dotnet_version]`: Optional. .NET version to be used (e.g., 7.0, 8.0). Default is 8.0.
+Example:
 ```sh
 net list-nuget --path src/app/td.api.test
 ```
 
 ### remove-nuget
-Remove um pacote NuGet do projeto.
+Removes a NuGet package from the project.
 
 ```sh
-net remove-nuget --package [nome_do_pacote] [--path caminho_do_projeto] [--version versao_do_dotnet]
+net remove-nuget --package [package_name] [--path project_path] [--version dotnet_version]
 ```
 
-Variáveis:
-* --package [nome_do_pacote]: Obrigatório. Nome do pacote NuGet a ser removido.
-* --path [caminho_do_projeto]: Opcional. Caminho do projeto para remover o pacote. Se não fornecido, usará o caminho padrão definido.
-* --version [versao_do_dotnet]: Opcional. Versão do .NET a ser utilizada (ex: 7.0, 8.0). Padrão é 8.0.
+Variables:
+* `--package [package_name]`: Required. Name of the NuGet package to be removed.
+* `--path [project_path]`: Optional. Path of the project to remove the package. If not provided, the default path will be used.
+* `--version [dotnet_version]`: Optional. .NET version to be used (e.g., 7.0, 8.0). Default is 8.0.
 
-Exemplo:
+Example:
 ```sh
 net remove-nuget --package Newtonsoft.Json --path src/app/td.api.test
 ```
 
 ### watch
-Assiste mudanças no projeto e recompila automaticamente.
+Watches for changes in the project and recompiles automatically.
 
 ```sh
-net watch [--path caminho_do_projeto] [--version versao_do_dotnet] [--port porta] [--debug]
+net watch [--path project_path] [--version dotnet_version] [--port port] [--debug]
 ```
 
-Variáveis:
-* --path [caminho_do_projeto]: Opcional. Caminho do projeto para assistir as mudanças. Se não fornecido, usará o caminho padrão definido.
-* --version [versao_do_dotnet]: Opcional. Versão do .NET a ser utilizada (ex: 7.0, 8.0). Padrão é 8.0.
-* --port [porta]: Opcional. Porta a ser utilizada pelo projeto. Padrão é 5000.
-* --debug: Opcional. Executa o projeto em modo debug (sem hot reload).
+Variables:
+* `--path [project_path]`: Optional. Path of the project to watch for changes. If not provided, the default path will be used.
+* `--version [dotnet_version]`: Optional. .NET version to be used (e.g., 7.0, 8.0). Default is 8.0.
+* `--port [port]`: Optional. Port to be used by the project. Default is 5000.
+* `--debug`: Optional. Runs the project in debug mode (without hot reload).
 
-Exemplo:
+Example:
 ```sh
 net watch --path src/app/td.api.test --port 5000
 ```
 
 ### help
-Mostra a ajuda detalhada do script.
+Shows detailed help for the script.
 
 ```sh
 net help
 ```
 
 ### up
-Sobe o ambiente Docker.
+Brings up the Docker environment.
 
 ```sh
 net up
 ```
 
-Exemplo:
+Example:
 ```sh
 net up
 ```
 
 ### down
-Finalizar o ambiente Docker.
+Brings down the Docker environment.
 
 ```sh
 net down
 ```
 
-Exemplo:
+Example:
 ```sh
 net down
 ```
 
 ## Licença
 
-Este projeto está licenciado sob os termos da licença MIT.
+This project is licensed under the terms of the MIT license.
