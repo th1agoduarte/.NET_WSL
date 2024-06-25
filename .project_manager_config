@@ -1,1 +1,4 @@
-DEFAULT_PROJECT_PATH="src/app/td.api.test"
+DEFAULT_PROJECT_PATH="backend/app/td.api.app"
+DEFAULT_DOTNET_VERSION="8.0"
+DEFAULT_PORT="5000"
+DEFAULT_DOCKER_NETWORK="app-network"

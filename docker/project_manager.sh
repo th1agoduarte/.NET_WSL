@@ -14,6 +14,7 @@ load_config() {
         DEFAULT_DOTNET_VERSION="8.0"
         DEFAULT_PORT=5000
         DEFAULT_PROJECT_PATH="src/app/default_project_path"
+        DEFAULT_DOCKER_NETWORK="app-network"
     fi
 }
 
@@ -36,6 +37,13 @@ set_default_project_path() {
     local project_path="$1"
     echo "DEFAULT_PROJECT_PATH=\"$project_path\"" >> "$CONFIG_FILE"
     echo "Caminho padrão do projeto definido como: $project_path"
+}
+
+# Função para definir a rede padrão do Docker
+set_default_docker_network() {
+    local network_name="$1"
+    echo "DEFAULT_DOCKER_NETWORK=\"$network_name\"" >> "$CONFIG_FILE"
+    echo "Rede Docker padrão definida como: $network_name"
 }
 
 # Função para obter o ID do usuário e grupo atual
@@ -154,6 +162,7 @@ run_project() {
     local dotnet_version="$DEFAULT_DOTNET_VERSION"
     local port=$DEFAULT_PORT
     local debug_mode=""
+    local docker_network="$DEFAULT_DOCKER_NETWORK"
 
     while [[ "$#" -gt 0 ]]; do
         case $1 in
@@ -161,6 +170,7 @@ run_project() {
             --version) dotnet_version="$2"; shift ;;
             --port) port="$2"; shift ;;
             --debug) debug_mode="--no-build"; shift ;;
+            --network) docker_network="$2"; shift ;;
             *) echo "Parâmetro desconhecido: $1"; exit 1 ;;
         esac
         shift
@@ -168,9 +178,9 @@ run_project() {
 
     local docker_image="mcr.microsoft.com/dotnet/sdk:${dotnet_version}"
 
-    echo "Rodando projeto em $project_path na porta $port..."
+    echo "Rodando projeto em $project_path na porta $port na rede $docker_network..."
 
-    docker run --rm -v $PROJECT_DIR:/workspace -w /workspace/$project_path -p $port:$port -e DOTNET_CLI_HOME=/tmp --user "$(id -u):$(id -g)" $docker_image dotnet run $debug_mode --urls "http://0.0.0.0:$port"
+    docker run --rm -v $PROJECT_DIR:/workspace -w /workspace/$project_path -p $port:$port --network $docker_network -e DOTNET_CLI_HOME=/tmp --user "$(id -u):$(id -g)" $docker_image dotnet run $debug_mode --urls "http://0.0.0.0:$port"
 }
 
 # Comando para aplicar migrações
@@ -443,6 +453,7 @@ watch_project() {
     local dotnet_version="$DEFAULT_DOTNET_VERSION"
     local port=$DEFAULT_PORT
     local debug_mode=""
+    local docker_network="$DEFAULT_DOCKER_NETWORK"
 
     while [[ "$#" -gt 0 ]]; do
         case $1 in
@@ -450,6 +461,7 @@ watch_project() {
             --version) dotnet_version="$2"; shift ;;
             --port) port="$2"; shift ;;
             --debug) debug_mode="--no-hot-reload"; shift ;;
+            --network) docker_network="$2"; shift ;;
             *) echo "Parâmetro desconhecido: $1"; exit 1 ;;
         esac
         shift
@@ -457,21 +469,21 @@ watch_project() {
 
     local docker_image="mcr.microsoft.com/dotnet/sdk:${dotnet_version}"
 
-    echo "Assistindo mudanças no projeto em $project_path na porta $port..."
+    echo "Assistindo mudanças no projeto em $project_path na porta $port na rede $docker_network..."
 
-    docker run --rm -v $PROJECT_DIR:/workspace -w /workspace/$project_path -p $port:$port -e DOTNET_CLI_HOME=/tmp --user "$(id -u):$(id -g)" $docker_image dotnet watch run $debug_mode --urls "http://0.0.0.0:$port"
+    docker run --rm -v $PROJECT_DIR:/workspace -w /workspace/$project_path -p $port:$port --network $docker_network -e DOTNET_CLI_HOME=/tmp --user "$(id -u):$(id -g)" $docker_image dotnet watch run $debug_mode --urls "http://0.0.0.0:$port"
 }
 
 # Comando para subir o ambiente Docker
 up_environment() {
     if command -v docker-compose &> /dev/null; then
-        docker-compose up -d
+        docker-compose up
     else
-        docker compose up -d
+        docker compose up
     fi
 }
 
-# Comando para subir o ambiente Docker
+# Comando para derrubar o ambiente Docker
 down_environment() {
     if command -v docker-compose &> /dev/null; then
         docker-compose down
@@ -480,30 +492,59 @@ down_environment() {
     fi
 }
 
-# Função para mostrar ajuda
+# Comando para criar um projeto React
+create_react_app() {
+    if command -v docker-compose &> /dev/null; then
+        docker-compose -f docker-compose.create-project.yml run --rm create-project sh -c "npx create-react-app frontend --template typescript"
+    else
+        docker compose -f docker-compose.create-project.yml run --rm create-project sh -c "npx create-react-app frontend --template typescript"
+    fi
+}
+
+# Comando para executar um comando Docker arbitrário
+run_custom_command() {
+    local custom_command="$1"
+
+    if [ -z "$custom_command" ]; then
+        echo "Uso: ./project_manager.sh run-custom-command '[comando]'"
+        echo "Exemplo: ./project_manager.sh run-custom-command 'npx create-react-app frontend --template typescript'"
+        exit 1
+    fi
+
+    if command -v docker-compose &> /dev/null; then
+        docker-compose -f docker-compose.create-project.yml run --rm create-project sh -c "$custom_command"
+    else
+        docker compose -f docker-compose.create-project.yml run --rm create-project sh -c "$custom_command"
+    fi
+}
+
 show_help() {
-    echo "Uso: ./project_manager.sh [comando] [opção]"
-    echo "Comandos:"
-    echo "  set-default-path [caminho_do_projeto]                                                        Define o caminho padrão do projeto"
-    echo "  set-default-dotnet-version [versao_do_dotnet]                                                Define a versão padrão do .NET"
-    echo "  set-default-port [porta]                                                                     Define a porta padrão"
-    echo "  init --solution [nome_da_solucao] --type [tipo_do_projeto] [--path caminho_do_projeto] [--version versao_do_dotnet]  Inicializa o ambiente de desenvolvimento"
-    echo "  add-project --type [tipo_do_projeto] [--path caminho_do_projeto] [--version versao_do_dotnet]  Adiciona um novo projeto à solução existente"
-    echo "  create [--path caminho_do_projeto] --type [tipo_do_projeto] [--version versao_do_dotnet]       Cria um novo projeto e adiciona à solução existente"
-    echo "  restore [--path caminho_do_projeto] [--version versao_do_dotnet]                               Restaura as dependências do projeto"
-    echo "  build [--path caminho_do_projeto] [--version versao_do_dotnet]                                 Compila o projeto"
-    echo "  run [--path caminho_do_projeto] [--version versao_do_dotnet] [--port porta] [--debug]          Executa o projeto"
-    echo "  migrate [--path caminho_do_projeto] [--version versao_do_dotnet]                               Aplica migrações ao banco de dados"
-    echo "  add-migration --name [nome_da_migracao] [--path caminho_do_projeto] [--version versao_do_dotnet] Cria uma nova migração"
-    echo "  remove-migration [--path caminho_do_projeto] [--version versao_do_dotnet]                      Remove a última migração"
-    echo "  rollback-migration --name [nome_da_migracao] [--path caminho_do_projeto] [--version versao_do_dotnet] Reverte para uma migração específica"
-    echo "  add-nuget --package [nome_do_pacote] [--path caminho_do_projeto] [--version versao_do_pacote] [--dotnet-version versao_do_dotnet] Adiciona um pacote NuGet ao projeto"
-    echo "  list-nuget [--path caminho_do_projeto] [--version versao_do_dotnet]                            Lista os pacotes NuGet do projeto"
-    echo "  remove-nuget --package [nome_do_pacote] [--path caminho_do_projeto] [--version versao_do_dotnet] Remove um pacote NuGet do projeto"
-    echo "  watch [--path caminho_do_projeto] [--version versao_do_dotnet] [--port porta] [--debug]        Assiste mudanças no projeto e recompila automaticamente"
-    echo "  up                                                                                             Sobe o ambiente Docker"
-    echo "  down                                                                                           Finalizar o ambiente Docker"
-    echo "  help                                                                                           Mostra esta ajuda"
+    printf "%-30s %-120s %s\n" "Command" "Parameters" "Description"
+    printf "%-30s %-120s %s\n" "-------" "----------" "-----------"
+    printf "%-30s %-120s %s\n" \
+        "set-default-path" "[project_path]" "Set the default project path" \
+        "set-default-dotnet-version" "[dotnet_version]" "Set the default .NET version" \
+        "set-default-port" "[port]" "Set the default port" \
+        "set-default-network" "[network_name]" "Set the default Docker network" \
+        "init" "--solution [solution_name] --type [project_type] [--path project_path] [--version dotnet_version]" "Initialize the development environment" \
+        "add-project" "--type [project_type] [--path project_path] [--version dotnet_version]" "Add a new project to the existing solution" \
+        "create" "[--path project_path] --type [project_type] [--version dotnet_version]" "Create a new project and add it to the existing solution" \
+        "restore" "[--path project_path] [--version dotnet_version]" "Restore project dependencies" \
+        "build" "[--path project_path] [--version dotnet_version]" "Build the project" \
+        "run" "[--path project_path] [--version dotnet_version] [--port port] [--debug] [--network network_name]" "Run the project" \
+        "migrate" "[--path project_path] [--version dotnet_version]" "Apply database migrations" \
+        "add-migration" "--name [migration_name] [--path project_path] [--version dotnet_version]" "Create a new migration" \
+        "remove-migration" "[--path project_path] [--version dotnet_version]" "Remove the last migration" \
+        "rollback-migration" "--name [migration_name] [--path project_path] [--version dotnet_version]" "Revert to a specific migration" \
+        "add-nuget" "--package [package_name] [--path project_path] [--version package_version] [--dotnet-version dotnet_version]" "Add a NuGet package to the project" \
+        "list-nuget" "[--path project_path] [--version dotnet_version]" "List NuGet packages in the project" \
+        "remove-nuget" "--package [package_name] [--path project_path] [--version dotnet_version]" "Remove a NuGet package from the project" \
+        "watch" "[--path project_path] [--version dotnet_version] [--port port] [--debug] [--network network_name]" "Watch for changes and rebuild the project" \
+        "up" "" "Start the Docker environment" \
+        "down" "" "Stop the Docker environment" \
+        "create-react-app" "" "Create a React project using create-react-app with TypeScript" \
+        "run-custom-command" "'[command]'" "Run a custom command in the Docker container" \
+        "help" "" "Show this help message"
 }
 
 # Verifica o comando fornecido
@@ -519,6 +560,10 @@ case "$1" in
     set-default-port)
         shift
         set_default_port "$@"
+        ;;
+    set-default-network)
+        shift
+        set_default_docker_network "$@"
         ;;
     init)
         get_user_group_ids
@@ -594,11 +639,20 @@ case "$1" in
         shift
         up_environment "$@"
         ;;
-    up)
+    down)
         shift
         down_environment "$@"
+        ;;
+    create-react-app)
+        shift
+        create_react_app "$@"
+        ;;
+    run-custom-command)
+        shift
+        run_custom_command "$@"
         ;;
     help | *)
         show_help
         ;;
 esac
+

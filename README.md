@@ -1,5 +1,7 @@
-# .NET Project in Docker WSL
-This repository contains the script project_manager.sh which facilitates the creation, management, and execution of .NET projects within a Docker environment. The script offers various commands to initialize solutions, add projects, restore dependencies, build, run, apply migrations, manage NuGet packages, among others.
+# .NET Project in Docker WSL / React
+This repository contains the project_manager.sh script that makes it easy to create, manage, and run .NET projects within a Docker environment. The script offers several commands to initialize solutions, add projects, restore dependencies, compile, run, apply migrations, manage NuGet packages, and more.
+In addition to the backend.
+net it is also possible to start a frontend project in React. The environment also has a MYSQL database version 8, mailpit for email testing and minio to simulate the AWS environment. And to facilitate an nginx server for React, mailpit and minio applications.
 
 ### Prerequisites
 - Docker

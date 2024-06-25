@@ -1,5 +1,8 @@
-# Projeto .NET no Docker WSL
-Este repositório contém o script project_manager.sh que facilita a criação, gerenciamento e execução de projetos .NET dentro de um ambiente Docker. O script oferece vários comandos para inicializar soluções, adicionar projetos, restaurar dependências, compilar, executar, aplicar migrações, gerenciar pacotes NuGet, entre outros.
+# Projeto .NET no Docker WSL / React
+Este repositório contém o script project_manager.sh que facilita a criação, gerenciamento e execução de projetos .NET em um ambiente Docker. O script oferece vários comandos para inicializar soluções, adicionar projetos, restaurar dependências, compilar, executar, aplicar migrações, gerenciar pacotes NuGet e muito mais.
+Além do back-end.
+net também é possível iniciar um projeto frontend em React. O ambiente conta ainda com banco de dados MYSQL versão 8, mailpit para testes de e-mail e minio para simular o ambiente AWS. E para facilitar um servidor nginx para aplicativos React, mailpit e minio.
+
 
 ### Pré-requisitos
 - Docker
@@ -23,7 +26,6 @@ net init --solution TesteDocker --type webapi --path src/app/td.api.test
 net add-project --type classlib --path src/domain/td.domain.test
 net migrate --path src/app/td.api.test
 ```
-
 ## Requisitos
 
 - Docker e Docker Compose instalados
@@ -32,7 +34,6 @@ Torne o script executável:
 ```sh
 chmod +x "$(pwd)/docker/project_manager.sh"
 ```
-
 ## Definir o Caminho Padrão do Projeto
 
 Para definir o caminho padrão do projeto, use o comando set-default-path:
@@ -48,6 +49,7 @@ O script project_manager.sh oferece os seguintes comandos:
 
 - `set-default-path`: Define o caminho padrão do projeto.
 - `set-default-dotnet-version`: Define a versão do .net a usar no projeto.
+- `set-default-network`: Define a nome de rede dos containers.
 - `set-default-port`: Define a porta padrão para abertura do run ou debugs do projeto.
 - `init`: Inicializa o ambiente de desenvolvimento.
 - `add-project`: Adiciona um novo projeto à solução existente.
@@ -63,9 +65,11 @@ O script project_manager.sh oferece os seguintes comandos:
 - `list-nuget`: Lista os pacotes NuGet do projeto.
 - `remove-nuget`: Remove um pacote NuGet do projeto.
 - `watch`: Assiste mudanças no projeto e recompila automaticamente.
-- `help`: Mostra a ajuda do script.
+- `run-custom-command`: Executa um comando customizado no contêiner Docker node php.
+- `create-react-app`: Cria um projeto React.
 - `up`: Sobe o docker compose do projeto
 - `down`: Finalizar o docker compose do projeto
+- `help`: Mostra a ajuda do script.
 
 ## Exemplo Instruções de Uso
 
@@ -145,6 +149,15 @@ Exemplo:
 ```sh
 net set-default-dotnet-version 8.0
 ```
+### set-default-network
+Define a rede Docker padrão que será utilizada quando uma rede não for explicitamente fornecida em outros comandos.
+
+```sh
+net set-default-network [nome_da_rede]
+```
+Exemplo:
+```sh
+net set-default-network app-network
 
 ### set-default-port
 Define a porta padrão que será utilizada quando uma porta não for explicitamente fornecida em outros comandos.
@@ -398,6 +411,38 @@ Mostra a ajuda detalhada do script.
 ```sh
 net help
 ```
+# Ambiente React e outros Serviços
+
+## create-react-app
+Cria um projeto React usando create-react-app com TypeScript no diretorio frontend.
+
+```sh
+net create-react-app
+```
+Após a criacao do projeto, ao realizar o comando net up, o container ja estara rodando no modo watch, ja acessivel na via navegador http://react.local
+
+## run-custom-command
+Este comando permite que você execute qualquer comando personalizado dentro do contêiner Docker.
+
+```sh
+net run-custom-command "npx create-react-app frontend --template typescript"
+```
+
+## Para usar nginx
+* Configurar no arquivo hosts do windows os seguintes hosts
+```sh
+# Acessar C:\Windows\System32\drivers\etc editar o arquivo hosts e adicionar
+127.0.0.1  react.local
+127.0.0.1  mailpit.local
+127.0.0.1  minio.local
+```
+## Acessando o minio
+via navegador http://minio.local
+Usuario: minioadmin
+Senha: minioadmin
+
+## Acessando o mailpit
+via navegador http://mailpit.local
 
 ### up
 Sobe o ambiente Docker.

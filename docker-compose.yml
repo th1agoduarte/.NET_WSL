@@ -1,15 +1,97 @@
 services:
-  dev:
+  frontend:
     build:
-      context: .
-      dockerfile: ./docker/Dockerfile
-      args:
-        USER_ID: ${UID:-1000}
-        GROUP_ID: ${GID:-1000}
+      context: ./frontend/.docker
+      dockerfile: Dockerfile
+    container_name: react_app
+    restart: unless-stopped
+    tty: true
+    stdin_open: true
     volumes:
-      - .:/workspace
+      - ./frontend:/usr/src/app
+      - ./frontend/.docker/entrypoint.sh:/usr/src/app/entrypoint.sh
+    entrypoint: ["/usr/src/app/entrypoint.sh"]
+    networks:
+      - app-network
+
+  nginx:
+    image: nginx:latest
+    container_name: nginx_proxy
+    restart: unless-stopped
     ports:
-      - "5000:5000"
-      - "5001:5001"
-    command: sleep infinity
-    user: "${UID:-1000}:${GID:-1000}"
+      - "80:80"
+    volumes:
+      - ./nginx/:/etc/nginx/conf.d/
+    networks:
+      - app-network
+
+  mysql:
+    image: mysql:8.0.30-debian
+    container_name: mysql
+    volumes:
+      - ./docker/dbdata:/var/lib/mysql
+    environment:
+      - MYSQL_ROOT_PASSWORD=root
+      - MYSQL_DATABASE=database_local
+    security_opt:
+      - seccomp:unconfined
+    ports:
+      - "3308:3306"
+    healthcheck:
+      test: ["CMD", "mysqladmin" ,"ping", "-h", "localhost"]
+      interval: 5s
+      timeout: 10s
+      retries: 3
+    networks:
+      - app-network
+
+  redis:
+    image: 'redis:alpine'
+    container_name: redis
+    ports:
+        - '6379:6379'
+    volumes:
+        - 'redis-date:/data'
+    networks:
+        - app-network
+    healthcheck:
+        test:
+            - CMD
+            - redis-cli
+            - ping
+        retries: 3
+        timeout: 5s
+
+  mailpit:
+    image: axllent/mailpit:latest
+    container_name: mailpit
+    restart: unless-stopped
+    ports:
+      - "1025:1025"
+      - "8025:8025"
+    networks:
+      - app-network
+
+  minio:
+    image: minio/minio:latest
+    hostname: minio
+    container_name: minio
+    restart: unless-stopped
+    environment:
+      MINIO_ROOT_USER: minioadmin
+      MINIO_ROOT_PASSWORD: minioadmin
+    command: server /data --console-address ":9001"
+    ports:
+      - "9001:9001"
+    volumes:
+      - minio-data:/data
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
+
+volumes:
+  minio-data:
+  redis-date:
