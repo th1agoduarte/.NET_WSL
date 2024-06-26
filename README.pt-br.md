@@ -16,9 +16,9 @@ alias net="docker/project_manager.sh"
 
 #Substitua caminho/para/seu pelo caminho real onde o script project_manager.sh está localizado.
 
-#D`epois de adicionar a linha, recarregue o arquivo de configuração`:
+#Depois de adicionar a linha, recarregue o arquivo de configuração`:
 
-source ~/.bashrc # ou source ~/.zshrc, dependendo do seu shell
+source   # ou source ~/.zshrc, dependendo do seu shell
 
 #A`gora você pode usar o alias pm para chamar o script project_manager.sh de qualquer lugar`:
 

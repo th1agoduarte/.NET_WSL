@@ -1,18 +1,33 @@
 services:
-  frontend:
-    build:
-      context: ./frontend/.docker
-      dockerfile: Dockerfile
-    container_name: react_app
-    restart: unless-stopped
-    tty: true
-    stdin_open: true
+  backend_dotnet:
+    image: mcr.microsoft.com/dotnet/aspnet:8.0
+    container_name: backend_dotnet
+    restart: always
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://0.0.0.0:80
+    ports:
+      - "5000:80" # Mapeando a porta interna do container para a porta externa 5000
     volumes:
-      - ./frontend:/usr/src/app
-      - ./frontend/.docker/entrypoint.sh:/usr/src/app/entrypoint.sh
-    entrypoint: ["/usr/src/app/entrypoint.sh"]
+      - ../publish:/app
+    working_dir: /app
+    command: ["dotnet", "td.api.app.dll"] 
     networks:
       - app-network
+  # frontend:
+  #   build:
+  #     context: ./frontend/.docker
+  #     dockerfile: Dockerfile
+  #   container_name: react_app
+  #   restart: unless-stopped
+  #   tty: true
+  #   stdin_open: true
+  #   volumes:
+  #     - ./frontend:/usr/src/app
+  #     - ./frontend/.docker/entrypoint.sh:/usr/src/app/entrypoint.sh
+  #   entrypoint: ["/usr/src/app/entrypoint.sh"]
+  #   networks:
+  #     - app-network
 
   nginx:
     image: nginx:latest
@@ -29,7 +44,7 @@ services:
     image: mysql:8.0.30-debian
     container_name: mysql
     volumes:
-      - ./docker/dbdata:/var/lib/mysql
+      - ./mysql/dbdata:/var/lib/mysql
     environment:
       - MYSQL_ROOT_PASSWORD=root
       - MYSQL_DATABASE=database_local
